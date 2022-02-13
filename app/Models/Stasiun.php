@@ -9,7 +9,7 @@ class Stasiun extends Model
 {
     use HasFactory;
 
-    protected $table = 'jadwal';
+    protected $table = 'stasiun';
     protected $fillable = ['nama'];
 
     public function jadwal_keberangkatan()

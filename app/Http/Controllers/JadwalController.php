@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Jadwal;
 use Illuminate\Http\Request;
+use App\Http\Responses\ApiResponse;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Jadwal\StoreRequest;
+use App\Http\Requests\Jadwal\UpdateRequest;
+use App\Http\Resources\JadwalResource;
 
 class JadwalController extends Controller
 {
@@ -14,17 +19,17 @@ class JadwalController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $jadwal = Jadwal::with('kereta', 'stasiun_asal', 'stasiun_tujuan');
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        foreach (['stasiun_asal_id', 'tanggal', 'jam'] as $param) {
+            if (request($param)) {
+                $jadwal = $jadwal->where($param, request($param));
+            }
+        }
+
+        $data = $jadwal->get();
+        $resource = JadwalResource::collection($data);
+        return ApiResponse::success('menampilkan seluruh jadwal', $resource);
     }
 
     /**
@@ -33,9 +38,11 @@ class JadwalController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        //
+        $jadwal = Jadwal::create(request()->all());
+        $resource = new JadwalResource($jadwal);
+        return ApiResponse::success('berhasil menambahkan jadwal', $resource);
     }
 
     /**
@@ -44,20 +51,14 @@ class JadwalController extends Controller
      * @param  \App\Models\Jadwal  $jadwal
      * @return \Illuminate\Http\Response
      */
-    public function show(Jadwal $jadwal)
+    public function show($id)
     {
-        //
-    }
+        $jadwal = Jadwal::find($id);
+        if (!$jadwal) return ApiResponse::failed('Data Jadwal tidak ditemukan');
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Jadwal  $jadwal
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Jadwal $jadwal)
-    {
-        //
+        $resource = new JadwalResource($jadwal);
+
+        return ApiResponse::success('data jadwal', $resource);
     }
 
     /**
@@ -67,9 +68,15 @@ class JadwalController extends Controller
      * @param  \App\Models\Jadwal  $jadwal
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Jadwal $jadwal)
+    public function update($id, UpdateRequest $request)
     {
-        //
+        $jadwal = Jadwal::find($id);
+        if (!$jadwal) return ApiResponse::failed('Data Jadwal tidak ditemukan');
+
+        $jadwal->update(request()->all());
+        $resource = new JadwalResource($jadwal);
+
+        return ApiResponse::success('data jadwal', $resource);
     }
 
     /**
@@ -78,8 +85,13 @@ class JadwalController extends Controller
      * @param  \App\Models\Jadwal  $jadwal
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Jadwal $jadwal)
+    public function delete($id)
     {
-        //
+        $jadwal = Jadwal::find($id);
+        if (!$jadwal) return ApiResponse::failed('Data Jadwal tidak ditemukan');
+
+        $jadwal->delete();
+
+        return ApiResponse::success('data jadwal berhasil dihapus');
     }
 }

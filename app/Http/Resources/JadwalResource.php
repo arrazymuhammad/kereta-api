@@ -14,6 +14,13 @@ class JadwalResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'stasiun_asal' => $this->stasiun_asal->nama,
+            'stasiun_tujuan' => $this->stasiun_tujuan->nama,
+            'kereta' => $this->kereta->nama,
+            'tanggal' => $this->tanggal,
+            'jam' => $this->jam
+        ];
     }
 }

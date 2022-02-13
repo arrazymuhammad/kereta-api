@@ -16,12 +16,12 @@ class Jadwal extends Model
     {
         return $this->belongsTo(Kereta::class, 'kereta_id');
     }
-    public function asal()
+    public function stasiun_asal()
     {
         return $this->belongsTo(Stasiun::class, 'stasiun_asal_id');
     }
 
-    public function tujuan()
+    public function stasiun_tujuan()
     {
         return $this->belongsTo(Stasiun::class, 'stasiun_tujuan_id');
     }

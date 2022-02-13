@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Stasiun;
+namespace App\Http\Requests\Jadwal;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,7 +24,11 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'nama' => 'required'
+            'kereta_id' => 'required|integer',
+            'stasiun_asal_id' => 'required|integer',
+            'stasiun_tujuan_id' => 'required|integer',
+            'tanggal' => 'required|date',
+            'jam' => 'required|date_format:H:i',
         ];
     }
 }
